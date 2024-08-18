@@ -29,9 +29,9 @@ function App() {
         setTranscript(interimTranscript);
 
         // Check if the sentence has ended based on punctuation
-        // if (/[.!?]\s*$/.test(interimTranscript)) {
+        if (/[.!?]\s*$/.test(interimTranscript)) {
           identifyMainTopics(interimTranscript);
-        // }
+        }
       };
 
       speechRecognition.onerror = (event) => {

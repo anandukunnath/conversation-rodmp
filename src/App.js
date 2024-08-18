@@ -28,10 +28,10 @@ function App() {
         transcriptRef.current = interimTranscript;
         setTranscript(interimTranscript);
 
-        // Check if the sentence has ended based on punctuation
-        if (/[.!?]\s*$/.test(interimTranscript)) {
-          identifyMainTopics(interimTranscript);
-        }
+        // // Check if the sentence has ended based on punctuation
+        // if (/[.!?]\s*$/.test(interimTranscript)) {
+        //   identifyMainTopics(interimTranscript);
+        // }
       };
 
       speechRecognition.onerror = (event) => {

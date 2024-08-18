@@ -1,22 +1,69 @@
-/* Add these styles to App.css */
+/* General styles */
+body {
+  font-family: Arial, sans-serif;
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
 
-.container {
+.App {
   display: flex;
   flex-direction: column;
-  margin-top: 20px;
-  height: calc(100vh - 90px); /* Adjust height to accommodate the fixed button */
+  height: 100vh;
+  background-color: #f9f9f9;
+  overflow: hidden; /* Prevent scrollbars on the main container */
+}
+
+/* Bottom navigation menu */
+.bottom-nav {
+  display: flex;
+  justify-content: space-between;
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  background-color: #f1f1f1;
+  border-top: 1px solid #ddd;
+  box-shadow: 0 -2px 5px rgba(0, 0, 0, 0.2);
+}
+
+.nav-button {
+  flex: 1;
+  padding: 10px;
+  text-align: center;
+  border: none;
+  background-color: #f1f1f1;
+  cursor: pointer;
+  overflow: hidden; /* Prevent overflow on buttons */
+}
+
+.nav-button.active {
+  background-color: #007bff;
+  color: #fff;
+}
+
+/* Listener section styles */
+.listener-section,
+.conversation-section {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  padding: 20px;
+  overflow: hidden; /* Prevent overflow in sections */
 }
 
 .transcript-section,
 .roadmap-section {
   width: 100%;
-  max-width: 600px; /* Fixed width for mobile view */
+  max-width: 100%; /* Ensure full width usage */
   margin: 0 auto;
 }
 
 .transcript-display,
-.roadmap {
+.roadmap,
+.transcription-list {
   overflow-y: auto; /* Enable vertical scrolling */
+  overflow-x: hidden; /* Disable horizontal scrolling */
 }
 
 .transcript-display {
@@ -24,6 +71,7 @@
   border: 1px solid #ddd;
   padding: 20px;
   height: 300px; /* Fixed height for scrolling */
+  box-sizing: border-box; /* Include padding in height */
 }
 
 .roadmap {
@@ -31,6 +79,7 @@
   padding: 20px;
   background-color: #f0f0f0;
   height: 300px; /* Fixed height for scrolling */
+  box-sizing: border-box; /* Include padding in height */
 }
 
 .roadmap-item {
@@ -54,62 +103,10 @@
   padding-left: 10px;
 }
 
-@media (max-width: 600px) {
-  .container {
-    padding: 10px;
-  }
-
-  .transcript-display {
-    height: 200px;
-  }
-
-  .roadmap {
-    height: 200px;
-  }
-
-  .roadmap-item {
-    margin-bottom: 15px;
-    padding-left: 20px;
-  }
-
-  .roadmap-bullet {
-    width: 8px;
-    height: 8px;
-  }
-}
-
-.record-button {
-  position: fixed;
-  bottom: 20px;
-  right: 20px;
-  width: 70px;
-  height: 70px;
-  border-radius: 50%;
-  background-color: #ff0000;
-  border: none;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.record-button.active {
-  background-color: #cc0000;
-}
-
-.record-icon {
-  width: 40px;
-  height: 40px;
-  border-radius: 50%;
-  background-color: #fff;
-  box-shadow: inset 0 0 0 5px #ff0000;
-}
-/* Add these styles to App.css */
-
+/* Record button and listening text */
 .record-container {
   position: fixed;
-  bottom: 20px;
+  bottom: 100px; /* Move the record button above the bottom navigation */
   right: 20px;
   display: flex;
   align-items: center;
@@ -126,6 +123,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
+  animation: pulsate 1.5s infinite; /* Pulsate animation */
 }
 
 .record-button.active {
@@ -140,17 +138,41 @@
   box-shadow: inset 0 0 0 5px #ff0000;
 }
 
-.listening-text {
-  margin-left: 10px;
-  margin-bottom: 10px;
-  font-size: 16px;
-  color: #ff0000;
-  animation: blink 1s infinite;
+/* Pulsate animation */
+@keyframes pulsate {
+  0% {
+    transform: scale(1);
+    box-shadow: 0 0 0 0 rgba(255, 0, 0, 0.7);
+  }
+  50% {
+    transform: scale(1.1);
+    box-shadow: 0 0 10px 5px rgba(255, 0, 0, 0.5);
+  }
+  100% {
+    transform: scale(1);
+    box-shadow: 0 0 0 0 rgba(255, 0, 0, 0.7);
+  }
 }
 
-@keyframes blink {
-  0% { opacity: 1; }
-  50% { opacity: 0.5; }
-  100% { opacity: 1; }
+/* Conversation section */
+.conversation-section {
+  flex: 1;
+  width: 100%;
+  max-width: 100%; /* Ensure full width usage */
+  margin: 0 auto;
+  padding: 0; /* Remove extra padding */
 }
 
+.transcription-list {
+  list-style-type: none;
+  padding: 0;
+  margin: 0;
+  height: calc(100vh - 140px); /* Adjust height to fit within viewport */
+  overflow-y: auto; /* Enable vertical scrolling */
+}
+
+.transcription-list li {
+  border-bottom: 1px solid #ddd;
+  padding: 10px 0;
+  box-sizing: border-box; /* Include padding in height */
+}

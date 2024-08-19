@@ -5,13 +5,12 @@ import './App.css';
 function App() {
   const [isListening, setIsListening] = useState(false);
   const [transcript, setTranscript] = useState('');
-  const [recognition, setRecognition] = useState(null);
   const [loggedTopics, setLoggedTopics] = useState([]);
   const [currentConversation, setCurrentConversation] = useState([]);
   const [activeTab, setActiveTab] = useState('listener');
+  const [lastTopic, setLastTopic] = useState(null);
 
   const recognitionRef = useRef(null);
-  const transcriptRef = useRef('');
 
   useEffect(() => {
     const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
@@ -26,16 +25,11 @@ function App() {
           interimTranscript += event.results[i][0].transcript;
         }
 
-        transcriptRef.current = interimTranscript;
         setTranscript(interimTranscript);
 
-        // Check if the sentence has ended based on punctuation
         if (/[.!?]\s*$/.test(interimTranscript)) {
-          // Log the sentence with timestamp in currentConversation
           const currentTime = new Date().toLocaleTimeString();
           setCurrentConversation(prev => [...prev, { time: currentTime, text: interimTranscript }]);
-
-          // Identify and log topics
           identifyMainTopics(interimTranscript);
         }
       };
@@ -48,7 +42,7 @@ function App() {
     } else {
       alert("Your browser does not support speech recognition.");
     }
-  }, [isListening]);
+  }, []);
 
   const handleStartListening = () => {
     if (recognitionRef.current) {
@@ -73,12 +67,24 @@ function App() {
 
     if (identifiedTopics.length > 0) {
       const currentTime = new Date().toLocaleTimeString();
-      setLoggedTopics(prev => [...prev, { time: currentTime, topics: identifiedTopics }]);
+      const newTopic = identifiedTopics.join(', ');
+
+      if (lastTopic && lastTopic !== newTopic) {
+        setLoggedTopics(prev => [...prev, { time: currentTime, topics: [newTopic], switch: true }]);
+      } else {
+        setLoggedTopics(prev => [...prev, { time: currentTime, topics: [newTopic] }]);
+      }
+
+      setLastTopic(newTopic);
     }
   };
 
   return (
     <div className="App">
+      {/* <div className="nav-bar"> */}
+        {/* <h1>{activeTab === 'listener' ? 'Listener' : 'Current Conversation'}</h1> */}
+      {/* </div> */}
+
       {activeTab === 'listener' && (
         <div className="listener-section">
           <div className="transcript-section">
@@ -93,8 +99,8 @@ function App() {
               {loggedTopics.map((entry, index) => (
                 <div className="roadmap-item" key={index}>
                   <div className="roadmap-bullet"></div>
-                  <div className="roadmap-content">
-                    <strong>{entry.time}:</strong> {entry.topics.join(', ')}
+                  <div className={`roadmap-content ${entry.switch ? 'topic-switch' : ''}`}>
+                    <strong>{entry.time}:</strong> {entry.topics.join(', ')} {entry.switch ? '(Topic Switch)' : ''}
                   </div>
                 </div>
               ))}
@@ -110,6 +116,7 @@ function App() {
           </div>
         </div>
       )}
+
       {activeTab === 'conversation' && (
         <div className="conversation-section">
           <ul className="transcription-list">
@@ -121,6 +128,7 @@ function App() {
           </ul>
         </div>
       )}
+
       <div className="bottom-nav">
         <button
           className={`nav-button ${activeTab === 'listener' ? 'active' : ''}`}

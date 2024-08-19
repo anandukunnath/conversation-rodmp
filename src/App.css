@@ -45,14 +45,135 @@
 }
 
 /* Transcription and Topic Sections */
-.transcript-section,
+/* Transcription Section */
+.transcript-section {
+  margin-bottom: 20px;
+  background-color: white;
+  border-radius: 16px;
+  padding: 15px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.05);
+  height: 200px; /* Set a smaller height for transcription section */
+  overflow-y: auto; /* Enable scrolling if content exceeds height */
+}
+
+/* Topic Flow Section */
 .roadmap-section {
   margin-bottom: 20px;
   background-color: white;
   border-radius: 16px;
   padding: 15px;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.05);
+  height: calc(90% - 440px); /* Adjust based on total height and other sections */
+  overflow-y: auto; /* Enable vertical scrolling */
 }
+/* App container */
+.App {
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  background-color: #f8f8f8;
+  font-family: -apple-system;
+  position: relative; /* Ensure that child elements are positioned relative to this container */
+}
+
+/* Navigation Bar */
+.nav-bar {
+  height: 60px;
+  background-color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0px 1px 3px rgba(0, 0, 0, 0.1);
+  position: fixed;
+  top: 0;
+  width: 100%;
+  z-index: 10;
+}
+
+/* Bottom Navigation */
+.bottom-nav {
+  height: 60px;
+  background-color: white;
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  border-top: 1px solid #ddd;
+  position: fixed;
+  bottom: 0;
+  width: 100%;
+  box-shadow: 0px -1px 3px rgba(0, 0, 0, 0.1);
+}
+
+/* Section containers */
+.listener-section,
+.conversation-section {
+  padding-top: 70px; /* Adjust for the navigation bar */
+  padding-bottom: 70px; /* Adjust for the bottom navigation bar */
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+}
+
+/* Transcription Section */
+.transcript-section {
+  margin-bottom: 20px;
+  background-color: white;
+  border-radius: 16px;
+  padding: 15px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.05);
+  height: 200px; /* Smaller height for the transcription section */
+  overflow-y: auto; /* Enable scrolling if content exceeds height */
+}
+
+/* Topic Flow Section */
+.roadmap-section {
+  flex: 1; /* Take up remaining space */
+  margin-bottom: 20px;
+  background-color: white;
+  border-radius: 16px;
+  padding: 15px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.05);
+  height: 90%; /* Full height of the available space */
+  overflow-y: auto; /* Enable vertical scrolling */
+}
+
+/* Record Button */
+.record-container {
+  position: fixed;
+  bottom: 70px; /* Adjust to ensure it doesn't overlap with bottom navigation */
+  left: 50%;
+  transform: translateX(-50%);
+}
+
+.record-button {
+  background-color: #007aff;
+  border: none;
+  border-radius: 50%;
+  width: 64px;
+  height: 64px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.record-button.active {
+  background-color: #ff3b30;
+}
+
+.record-button:focus {
+  outline: none;
+}
+
+.record-icon {
+  width: 24px;
+  height: 24px;
+  background-color: white;
+  border-radius: 50%;
+}
+
 
 .transcript-display {
   font-size: 16px;
@@ -173,4 +294,44 @@
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.05);
   font-size: 16px;
   color: #333;
+}
+.roadmap ul {
+  list-style-type: none;
+  padding-left: 0;
+  margin: 0;
+  position: relative;
+}
+
+.roadmap li {
+  margin-bottom: 30px; /* Increased spacing */
+  display: flex;
+  align-items: center;
+  flex-direction: column;
+}
+
+.roadmap-item-bubble {
+  background: linear-gradient(135deg, #6A8DFF 0%, #4A6DD1 100%); /* Improved gradient color */
+  color: white;
+  padding: 15px 25px; /* Increased padding */
+  border-radius: 50px;
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.1); /* Softer shadow */
+  text-align: center;
+  max-width: 250px; /* Wider bubble */
+  word-wrap: break-word;
+  margin-bottom: 10px; /* Extra space between bubbles */
+}
+
+.roadmap li::before {
+  content: "";
+  position: absolute;
+  width: 2px;
+  height: 30px; /* Increased height of the connecting line */
+  background-color: #4A6DD1; /* Match with the bubble color */
+  top: 0;
+  left: 50%;
+  transform: translateX(-50%);
+}
+
+.roadmap ul > li:last-child::before {
+  display: none;
 }

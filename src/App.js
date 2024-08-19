@@ -5,12 +5,14 @@ import './App.css';
 function App() {
   const [isListening, setIsListening] = useState(false);
   const [transcript, setTranscript] = useState('');
-  const [loggedTopics, setLoggedTopics] = useState([]);
+  const [recognition, setRecognition] = useState(null);
+  const [topicTree, setTopicTree] = useState({ topic: 'Conversation', children: [] });
   const [currentConversation, setCurrentConversation] = useState([]);
   const [activeTab, setActiveTab] = useState('listener');
-  const [lastTopic, setLastTopic] = useState(null);
 
   const recognitionRef = useRef(null);
+  const transcriptRef = useRef('');
+  const currentTopicRef = useRef(topicTree); // To keep track of the current topic branch
 
   useEffect(() => {
     const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
@@ -25,11 +27,16 @@ function App() {
           interimTranscript += event.results[i][0].transcript;
         }
 
+        transcriptRef.current = interimTranscript;
         setTranscript(interimTranscript);
 
+        // Check if the sentence has ended based on punctuation
         if (/[.!?]\s*$/.test(interimTranscript)) {
+          // Log the sentence with timestamp in currentConversation
           const currentTime = new Date().toLocaleTimeString();
           setCurrentConversation(prev => [...prev, { time: currentTime, text: interimTranscript }]);
+
+          // Identify and log topics
           identifyMainTopics(interimTranscript);
         }
       };
@@ -42,7 +49,7 @@ function App() {
     } else {
       alert("Your browser does not support speech recognition.");
     }
-  }, []);
+  }, [isListening]);
 
   const handleStartListening = () => {
     if (recognitionRef.current) {
@@ -67,24 +74,39 @@ function App() {
 
     if (identifiedTopics.length > 0) {
       const currentTime = new Date().toLocaleTimeString();
-      const newTopic = identifiedTopics.join(', ');
-
-      if (lastTopic && lastTopic !== newTopic) {
-        setLoggedTopics(prev => [...prev, { time: currentTime, topics: [newTopic], switch: true }]);
-      } else {
-        setLoggedTopics(prev => [...prev, { time: currentTime, topics: [newTopic] }]);
-      }
-
-      setLastTopic(newTopic);
+      updateTopicTree(identifiedTopics[0], currentTime);
     }
   };
 
+  const updateTopicTree = (newTopic, time) => {
+    const updatedTree = { ...topicTree };
+    let currentBranch = currentTopicRef.current;
+
+    // If the new topic deviates, create a new branch
+    if (currentBranch.topic !== newTopic) {
+      const newBranch = { topic: newTopic, time, children: [] };
+      currentBranch.children.push(newBranch);
+      currentTopicRef.current = newBranch; // Set new branch as the current branch
+    }
+
+    setTopicTree(updatedTree); // Update state with new tree structure
+  };
+
+  const renderTopicTree = (node) => (
+    <li key={node.topic}>
+      <div className="roadmap-item-bubble">
+        <strong>{node.time ? `${node.time}: ` : ''}</strong> {node.topic}
+      </div>
+      {node.children.length > 0 && (
+        <ul>
+          {node.children.map(child => renderTopicTree(child))}
+        </ul>
+      )}
+    </li>
+  );
+
   return (
     <div className="App">
-      {/* <div className="nav-bar"> */}
-        {/* <h1>{activeTab === 'listener' ? 'Listener' : 'Current Conversation'}</h1> */}
-      {/* </div> */}
-
       {activeTab === 'listener' && (
         <div className="listener-section">
           <div className="transcript-section">
@@ -94,16 +116,11 @@ function App() {
             </div>
           </div>
           <div className="roadmap-section">
-            <h2>Detected Topics</h2>
+            <h2>Topic Flow</h2>
             <div className="roadmap">
-              {loggedTopics.map((entry, index) => (
-                <div className="roadmap-item" key={index}>
-                  <div className="roadmap-bullet"></div>
-                  <div className={`roadmap-content ${entry.switch ? 'topic-switch' : ''}`}>
-                    <strong>{entry.time}:</strong> {entry.topics.join(', ')} {entry.switch ? '(Topic Switch)' : ''}
-                  </div>
-                </div>
-              ))}
+              <ul>
+                {renderTopicTree(topicTree)}
+              </ul>
             </div>
           </div>
           <div className="record-container">
@@ -116,7 +133,6 @@ function App() {
           </div>
         </div>
       )}
-
       {activeTab === 'conversation' && (
         <div className="conversation-section">
           <ul className="transcription-list">
@@ -128,7 +144,6 @@ function App() {
           </ul>
         </div>
       )}
-
       <div className="bottom-nav">
         <button
           className={`nav-button ${activeTab === 'listener' ? 'active' : ''}`}
